@@ -1,0 +1,77 @@
+<mvc:View displayBlock="true" controllerName="com.minda.Forecast.controller.Detail" height="100%" xmlns="sap.uxap"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout">
+	<ObjectPageLayout busy="{detailViewModel>/busy}" id="ObjectPageLayout" showTitleInHeaderContent="true" alwaysShowContentHeader="true"
+		preserveHeaderStateOnScroll="true" headerContentPinnable="false" isChildPage="false" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle >
+				<expandedHeading>
+					<m:Title text="{detailViewModel>/detailViewTitle}" wrapping="true" class="sapUiSmallMarginEnd"/>
+				</expandedHeading>
+				<snappedHeading>
+					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+							<!--<f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>-->
+							<m:Title text="{detailViewModel>/detailViewTitle}" wrapping="true" class="sapUiTinyMarginEnd"/>
+						</m:FlexBox>
+					</m:FlexBox>
+				</snappedHeading>
+				<actions>
+					<ObjectPageHeaderActionButton visible="{= ${device>/system/phone}? true:false}" hideText="true" type="Transparent" icon="sap-icon://decline"
+						press="handleClose" tooltip="Go to Master List"/>
+					<ObjectPageHeaderActionButton visible="{detailViewModel>/mPBVisible}" icon="sap-icon://gantt-bars" text="Monthly Procurement Schedule"
+						type="Emphasized" hideText="false" press="onPressMonthlyProcurementPress"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://excel-attachment" type="Emphasized" hideText="false" text="EXPORT TO CSV"
+						press="onPressDownload"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<headerContent>
+			<m:FlexBox wrap="Wrap" visible="{detailViewModel>/felxBoxVisible}">
+				<f:Avatar src="sap-icon://customer-order-entry" displaySize="M" displayShape="Circle" class="sapUiTinyMarginEnd"></f:Avatar>
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus class="customOSClass" title="Vendor Name" text="{detailViewModel>/VendorName}"/>
+					<m:ObjectStatus class="customOSClass" title="Order Type" text="{detailViewModel>/DocType}"/>
+					<m:ObjectStatus class="customOSClass" title="Payment Terms" text="{detailViewModel>/PmntTerms}"/>
+				</layout:VerticalLayout>
+				<layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+					<m:ObjectStatus class="customOSClass" title="Delivery Plant" text="{detailViewModel>/Plant}"/>
+					<m:ObjectStatus class="customOSClass" title="Validity"
+						text="{path: 'detailViewModel>/StartDate', formatter: '.formatter.setDate'} to {path: 'detailViewModel>/EndDate', formatter: '.formatter.setDate'}"/>
+					<m:ObjectStatus class="customOSClass" title="Status" text="{detailViewModel>/Category}"/>
+				</layout:VerticalLayout>
+			</m:FlexBox>
+		</headerContent>
+		<sections>
+			<ObjectPageSection class="sapOPSectionCss">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<m:VBox>
+								<m:OverflowToolbar>
+									<m:content>
+										<m:Title text="{detailViewModel>/tableTitle}"/>
+										<m:ToolbarSpacer/>
+										<m:SearchField width="25%" placeholder="Search Material Code..." liveChange="onMaterialCodeSearch"/>
+										<m:SearchField width="25%" placeholder="Search Material Name..." liveChange="onMaterialNameSearch"/>
+										<m:DateRangeSelection showFooter="true" width="25%" change="handleDateRangeChange" placeholder="From / To Date"
+											dateValue="{detailViewModel>/fromDate}" secondDateValue="{detailViewModel>/toDate}"/>
+									</m:content>
+								</m:OverflowToolbar>
+								<m:ScrollContainer width="100%" height="550px" horizontal="true" class="sapMSCCss">
+									<m:Table id="table" noDataText="There is no data, select date range..." columns="{detailViewModel>/tableColumns}"
+										sticky="HeaderToolbar,ColumnHeaders">
+										<m:columns>
+											<m:Column demandPopin="true" minScreenWidth="Phone">
+												<m:Label design="Bold" text="{path: 'detailViewModel>', formatter: '.formatter.setColumnLabel'}" wrapping="true"/>
+											</m:Column>
+										</m:columns>
+									</m:Table>
+								</m:ScrollContainer>
+							</m:VBox>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>
