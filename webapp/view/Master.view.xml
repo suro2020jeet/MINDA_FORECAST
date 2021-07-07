@@ -11,6 +11,9 @@
 			</OverflowToolbar>
 		</subHeader>
 		<content>
+			<HBox height="3rem" justifyContent="End" visible="{listViewModel>/showAdvancedSearch}" alignItems="Center">
+				<Link text="Advanced Search" press="onAdvancedSearchPress"/>
+			</HBox>
 			<Table mode="SingleSelectMaster" itemPress="onAllOrderPress">
 				<columns>
 					<Column ></Column>
@@ -23,8 +26,8 @@
 					</ColumnListItem>
 				</items>
 			</Table>
-			<Table sticky="HeaderToolbar" mode="SingleSelectMaster" id="table" items="{ path: 'aggrements>/results'}"
-				updateFinished="onUpdateFinished" itemPress="onListItemPress" growing="true" growingThreshold="18" growingScrollToLoad="true">
+			<Table sticky="HeaderToolbar" mode="SingleSelectMaster" id="table" items="{ path: 'aggrements>/results'}" updateFinished="onUpdateFinished"
+				itemPress="onListItemPress" growing="true" growingThreshold="18" growingScrollToLoad="true">
 				<columns>
 					<Column ></Column>
 				</columns>

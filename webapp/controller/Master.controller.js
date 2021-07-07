@@ -18,14 +18,40 @@ sap.ui.define([
 			this.getOwnerComponent().setModel(new JSONModel({
 				busy: true,
 				PageNumber: "1",
-				columListItemSelected: true
+				columListItemSelected: true,
+				plant: "1031",
+				vendor: "0000200323",
+				showAdvancedSearch: false
 			}), "listViewModel");
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
-			this._getUserDetails();
-			this.oRouter.navTo("detail", {
-				AgreementNo: "all"
-			});
+			if (!sap.ushell) {} else {
+				if (sap.ui.getCore().plants != undefined) {
+					if (sap.ui.getCore().plants.hasOwnProperty("plant")) {
+						if (sap.ui.getCore().plants.plant) {
+							this.getOwnerComponent().getModel("listViewModel").setProperty("/plant", sap.ui.getCore().plants.plant);
+							this._getMasterListData(this.getOwnerComponent().getModel("listViewModel").getProperty("/PageNumber"));
+							this.oRouter.navTo("detail", {
+								AgreementNo: "all"
+							});
+						}
+					}
+					sap.ui.getCore().plants.registerListener(function (val) {
+						if (val) {
+							this.getOwnerComponent().getModel("listViewModel").setProperty("/plant", val);
+							this._getMasterListData(this.getOwnerComponent().getModel("listViewModel").getProperty("/PageNumber"));
+							this.oRouter.navTo("detail", {
+								AgreementNo: "all"
+							});
+						}
+					}.bind(this));
+				}
+			}
+			// this._getUserDetails();
+			// this._getMasterListData(this.getOwnerComponent().getModel("listViewModel").getProperty("/PageNumber"));
+			// this.oRouter.navTo("detail", {
+			// 	AgreementNo: "all"
+			// });
 		},
 		onAllOrderPress: function () {
 			for (var i = 0; i < this.byId("table").getItems().length; i++) {
@@ -117,6 +143,44 @@ sap.ui.define([
 			} else {
 				this._applyFilter([]);
 			}
+		},
+		onChangePlant: function (oEvent) {
+			debugger;
+			this.getOwnerComponent().getModel("listViewModel").setProperty("/plant", oEvent.getSource().getSelectedItem().getKey());
+			jQuery.ajax({
+				type: "GET",
+				contentType: "application/x-www-form-urlencoded",
+				headers: {
+					"Authorization": "Basic NDMyYjNjZjMtNGE1OS0zOWRiLWEwMWMtYzM5YzhjNGYyNTNkOjk2NTJmOTM0LTkwMmEtMzE1MS05OWNiLWVjZTE1MmJkZGQ1NA=="
+				},
+				url: "/token/accounts/c70391893/plant/vendors?plantId=" + oEvent.getSource().getSelectedItem().getKey(),
+				dataType: "json",
+				async: false,
+				success: function (data, textStatus, jqXHR) {
+					this.plants = data.plants;
+					this.getOwnerComponent().setModel(new JSONModel(data), "vendorModel");
+				}.bind(this),
+				error: function (data) {
+					// console.log("error", data);
+				}
+			});
+		},
+		onChangeVendor: function (oEvent) {
+			this.getOwnerComponent().getModel("listViewModel").setProperty("/vendor", oEvent.getSource().getSelectedItem().getKey());
+		},
+		onAdvancedSearchPress: function () {
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment("com.minda.Forecast.fragments.AdvancedSearch", this);
+				this.getView().addDependent(this._oDialog);
+			}
+			this._oDialog.open();
+		},
+		onPressCloseDialog: function () {
+			this._oDialog.close();
+		},
+		onPressApply: function () {
+			this._oDialog.close();
+			this._getMasterListData(this.getOwnerComponent().getModel("listViewModel").getProperty("/PageNumber"));
 		}
 
 	});
